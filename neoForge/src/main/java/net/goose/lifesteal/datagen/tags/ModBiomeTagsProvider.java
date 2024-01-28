@@ -1,4 +1,4 @@
-package net.goose.lifesteal.datagen;
+package net.goose.lifesteal.datagen.tags;
 
 import net.goose.lifesteal.LifeSteal;
 import net.goose.lifesteal.util.ModTags;

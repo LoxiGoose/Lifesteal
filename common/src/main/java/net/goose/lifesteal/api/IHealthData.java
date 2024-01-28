@@ -1,24 +1,21 @@
 package net.goose.lifesteal.api;
 
-import net.goose.lifesteal.util.Serializable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 
 
-public interface IHealthData extends Serializable<CompoundTag> {
+public interface IHealthData {
     void revivedTeleport();
-
+    boolean withdrawHearts(int heartCount);
     BlockPos spawnPlayerHead();
     boolean dropPlayerHead();
     LivingEntity getLivingEntity();
-    double getHeartModifiedTotal(boolean includeHeartDifference);
+    double getHealthModifiedTotal(boolean includeHealthDifference);
     double getHPDifferenceRequiredForBan();
+    double getAmountOfHealthCanLose();
     void banForDeath();
-    int getHealthDifference();
-
+    int getHealthDifference(boolean onlyGetGainedDifference);
     void setHealthDifference(int hearts);
-
     void refreshHearts(boolean healtoMax);
 }
 

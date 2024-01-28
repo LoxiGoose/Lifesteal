@@ -118,3 +118,4 @@ run/
 !gradle-wrapper.jar
 /forge/src/generated/resources/.cache/
 /neoforge/src/generated/.cache/
+/neoForge/src/generated/resources/.cache/

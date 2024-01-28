@@ -40,7 +40,7 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerImpl {
         boolean alreadyGiven = false;
 
         if (maximumhitpointsGainable > -1 && LifeSteal.config.playerDropsHeartCrystalWhenKillerHasMax.get() && !LifeSteal.config.playerDropsHeartCrystalWhenKilled.get()) {
-            if (data.getHealthDifference() + hitpoint > LifeSteal.config.startingHealthDifference.get() + maximumhitpointsGainable) {
+            if (data.getHealthDifference(true) + hitpoint > maximumhitpointsGainable) {
                 dropKilledHeartCrystal(killedPlayer);
                 alreadyGiven = true;
             }
@@ -48,7 +48,7 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerImpl {
 
         if (!alreadyGiven) {
             if (!LifeSteal.config.playerDropsHeartCrystalWhenKilled.get()) {
-                data.setHealthDifference(data.getHealthDifference() + hitpoint);
+                data.setHealthDifference(data.getHealthDifference(false) + hitpoint);
                 data.refreshHearts(false);
             }
         }
@@ -58,7 +58,7 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerImpl {
     private void tickMethod(final CallbackInfo info){
         HealthData.get(this).ifPresent(healthData -> {
             // Are we at the amount where player should be banned based on their stats?
-            if(healthData.getHealthDifference() <= healthData.getHPDifferenceRequiredForBan()){
+            if(healthData.getHealthDifference(false) <= healthData.getHPDifferenceRequiredForBan()){
                 healthData.banForDeath();
             }
         });
@@ -71,16 +71,16 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerImpl {
         final int amountOfHealthLostUponLossConfig = LifeSteal.config.amountOfHealthLostUponLoss.get();
         final boolean playersGainHeartsifKillednoHeart = LifeSteal.config.playersGainHeartsifKillednoHeart.get();
         final boolean disableLifesteal = LifeSteal.config.disableLifesteal.get();
-        final boolean loseHeartsWhenKilledByPlayer = LifeSteal.config.loseHeartsWhenKilledByPlayer.get();
-        final boolean loseHeartsWhenKilledByMob = LifeSteal.config.loseHeartsWhenKilledByMob.get();
-        final boolean loseHeartsWhenKilledByEnvironment = LifeSteal.config.loseHeartsWhenKilledByEnvironment.get();
+        final boolean loseHeartsWhenKilledByPlayer = LifeSteal.config.loseHealthWhenKilledByPlayer.get();
+        final boolean loseHeartsWhenKilledByMob = LifeSteal.config.loseHealthWhenKilledByMob.get();
+        final boolean loseHeartsWhenKilledByEnvironment = LifeSteal.config.loseHealthWhenKilledByEnvironment.get();
 
         LivingEntity killedEntity = this;
 
         HealthData.get(killedEntity).ifPresent(healthData -> {
             if (killedEntity instanceof ServerPlayer) {
                 if (!killedEntity.isAlive()) {
-                    int HeartDifference = healthData.getHealthDifference();
+                    int HeartDifference = healthData.getHealthDifference(false);
 
                     LivingEntity killerEntity = killedEntity.getLastHurtByMob();
                     boolean killerEntityIsPlayer = killerEntity instanceof ServerPlayer;
@@ -150,7 +150,7 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerImpl {
                         return;
                     }
 
-                    healthData.setHealthDifference(healthData.getHealthDifference() - amountOfHealthLostUponLoss);
+                    healthData.setHealthDifference(healthData.getHealthDifference(false) - amountOfHealthLostUponLoss);
                     healthData.refreshHearts(false);
                     if (LifeSteal.config.playerDropsHeartCrystalWhenKilled.get()) {
                         dropKilledHeartCrystal(killedEntity);

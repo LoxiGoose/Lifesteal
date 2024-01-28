@@ -24,4 +24,5 @@ public class HealthDataImpl {
     public static void setHealthDifference(HealthData healthData, int health) {
         healthData.getLivingEntity().setData(ModDataAttachments.HEALTH_DATA.get(), health);
     }
+
 }

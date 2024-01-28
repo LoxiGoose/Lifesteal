@@ -72,14 +72,14 @@ public class HeartCrystalItem extends Item {
             HealthData.get(entity).ifPresent(IHeartCap -> {
                 if (LifeSteal.config.maximumHealthGainable.get() > -1 && LifeSteal.config.preventFromUsingCrystalIfMax.get()) {
                     int maximumheartDifference = LifeSteal.config.startingHealthDifference.get() + LifeSteal.config.maximumHealthGainable.get();
-                    if (IHeartCap.getHealthDifference() == maximumheartDifference) {
+                    if (IHeartCap.getHealthDifference(false) == maximumheartDifference) {
                         serverPlayer.displayClientMessage(Component.translatable("gui.lifesteal.heart_crystal_reaching_max"), true);
                         success.set(false);
                     }
                 }
 
                 if (success.get()) {
-                    int newheartDifference = IHeartCap.getHealthDifference() + LifeSteal.config.heartCrystalAmountGain.get();
+                    int newheartDifference = IHeartCap.getHealthDifference(false) + LifeSteal.config.heartCrystalAmountGain.get();
 
                     IHeartCap.setHealthDifference(newheartDifference);
                     IHeartCap.refreshHearts(false);

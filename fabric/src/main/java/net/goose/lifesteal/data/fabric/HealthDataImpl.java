@@ -39,17 +39,16 @@ public class HealthDataImpl extends HealthData implements ComponentV3 {
     public static void setHealthDifference(HealthData healthData, int health) {
         ((HealthDataImpl) healthData).healthDifference = health;
     }
-
     @Override
     public void readFromNbt(CompoundTag tag) {
-        this.deserializeNBT(tag);
+        setHealthDifference(tag.getInt("heartdifference"));
     }
 
     @Override
     public void writeToNbt(CompoundTag tag) {
-        CompoundTag nbt = this.serializeNBT();
-        for (String key : nbt.getAllKeys()) {
-            tag.put(key, Objects.requireNonNull(nbt.get(key)));
+        tag.putInt("heartdifference", getHealthDifference(false));
+        for (String key : tag.getAllKeys()) {
+            tag.put(key, Objects.requireNonNull(tag.get(key)));
         }
     }
 }

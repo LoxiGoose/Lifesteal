@@ -84,6 +84,39 @@ public class HealthData implements IHealthData {
     }
 
     @Override
+    public boolean withdrawHearts(int heartCount) {
+        int maximumHealthLoseable = LifeSteal.config.maximumHealthLoseable.get();
+        int startingHitPointDifference = LifeSteal.config.startingHealthDifference.get();
+        int withdrawAmount = LifeSteal.config.heartCrystalAmountGain.get() * heartCount;
+        int newHealthDifference = this.getHealthDifference(false) - withdrawAmount;
+        ServerPlayer serverPlayer = ((ServerPlayer) this.getLivingEntity());
+
+        if (maximumHealthLoseable >= 0) {
+            if (newHealthDifference < startingHitPointDifference - maximumHealthLoseable) {
+                serverPlayer.displayClientMessage(Component.translatable("gui.lifesteal.can't_withdraw_less_than_minimum"), true);
+                return false;
+            }
+        }else if(newHealthDifference <= this.getHPDifferenceRequiredForBan()) {
+            serverPlayer.displayClientMessage(Component.translatable("gui.lifesteal.can't_withdraw_less_than_amount_have"), true);
+            return false;
+        }
+
+        this.setHealthDifference(newHealthDifference);
+        this.refreshHearts(false);
+
+        ItemStack heartCrystal = new ItemStack(ModItems.HEART_CRYSTAL.get(), heartCount);
+        CompoundTag compoundTag = heartCrystal.getOrCreateTagElement("lifesteal");
+        compoundTag.putBoolean("Unfresh", true);
+        heartCrystal.setHoverName(Component.translatable("item.lifesteal.heart_crystal.unnatural"));
+        if (serverPlayer.getInventory().getFreeSlot() == -1) {
+            serverPlayer.drop(heartCrystal, true);
+        } else {
+            serverPlayer.getInventory().add(heartCrystal);
+        }
+        return true;
+    }
+
+    @Override
     public BlockPos spawnPlayerHead() {
         if (this.livingEntity instanceof ServerPlayer serverPlayer) {
             Level level = serverPlayer.level();
@@ -163,8 +196,9 @@ public class HealthData implements IHealthData {
         throw new AssertionError();
     }
     @Override
-    public int getHealthDifference() {
-        return getHealthDifference(this);
+    public int getHealthDifference(boolean onlyGetGainedOrLostDifference) {
+        int healthDifference = getHealthDifference(this);
+        return onlyGetGainedOrLostDifference ? (int) (healthDifference - (Math.signum(healthDifference) * LifeSteal.config.startingHealthDifference.get())) : getHealthDifference(this);
     }
 
     @Override
@@ -176,10 +210,10 @@ public class HealthData implements IHealthData {
 
     // Returns the real amount of hitpoints a player has, includes every other mod's effect and ours.
     @Override
-    public double getHeartModifiedTotal(boolean includeHeartDifference){
+    public double getHealthModifiedTotal(boolean includeHealthDifference){
         AttributeInstance Attribute = this.livingEntity.getAttribute(Attributes.MAX_HEALTH);
         Set<AttributeModifier> attributemodifiers = Attribute.getModifiers();
-        double healthModifiedTotal = includeHeartDifference ? getHealthDifference() : 0.0;
+        double healthModifiedTotal = includeHealthDifference ? getHealthDifference(false) : 0.0;
 
         if (!attributemodifiers.isEmpty()) {
             Iterator<AttributeModifier> attributeModifierIterator = attributemodifiers.iterator();
@@ -208,8 +242,20 @@ public class HealthData implements IHealthData {
     // Returns the amount a player's HPDifference would have to be to get banned.
     @Override
     public double getHPDifferenceRequiredForBan(){
-        double healthModified = this.getHeartModifiedTotal(false) + this.livingEntity.getAttribute(Attributes.MAX_HEALTH).getBaseValue();
+        double healthModified = this.getHealthModifiedTotal(false) + this.livingEntity.getAttribute(Attributes.MAX_HEALTH).getBaseValue();
         return -healthModified;
+    }
+
+    @Override
+    public double getAmountOfHealthCanLose(){
+        double amountOfHealthCanLose = ;
+
+        if(LifeSteal.config.onlyLoseHealthGained.get()) {
+
+        }
+        else if(LifeSteal.config.maximumHealthGainable.get() > -1){
+
+        }
     }
 
     @Override
@@ -263,24 +309,29 @@ public class HealthData implements IHealthData {
             final int defaultHealthDifference = LifeSteal.config.startingHealthDifference.get();
             final int maximumHealthGainable = LifeSteal.config.maximumHealthGainable.get();
             final int maximumHealthLoseable = LifeSteal.config.maximumHealthLoseable.get();
+            final boolean onlyLoseHealthGained = LifeSteal.config.onlyLoseHealthGained.get();
 
-            int healthDifference = getHealthDifference();
+            int healthDifference = getHealthDifference(false);
 
             if (maximumHealthGainable > -1) {
                 if (healthDifference - defaultHealthDifference >= maximumHealthGainable) {
                     healthDifference = maximumHealthGainable + defaultHealthDifference;
 
-                    if (LifeSteal.config.tellPlayersIfReachedMaxHearts.get()) {
+                    if (LifeSteal.config.tellPlayersIfReachedMaxHealth.get()) {
                         this.livingEntity.sendSystemMessage(Component.translatable("chat.message.lifesteal.reached_max_hearts"));
                     }
                 }
             }
 
-            if (maximumHealthLoseable >= 0) {
-                healthDifference = Math.max(healthDifference, defaultHealthDifference - maximumHealthLoseable);
-            }
+            // onlyLoseHealthGained comes before checking for maximumHealthLoseable as it is more specific
+            if(onlyLoseHealthGained)
+                if(this.getHealthDifference(true) < 0)
+                    healthDifference = 0;
+            else if(maximumHealthLoseable >= 0)
+                    healthDifference = Math.max(healthDifference, defaultHealthDifference - maximumHealthLoseable);
 
-            setHealthDifference(healthDifference);
+
+            this.setHealthDifference(healthDifference);
 
             AttributeInstance Attribute = this.livingEntity.getAttribute(Attributes.MAX_HEALTH);
             Set<AttributeModifier> attributemodifiers = Attribute.getModifiers();
@@ -320,17 +371,5 @@ public class HealthData implements IHealthData {
             }
         }
 
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
-        tag.putInt("heartdifference", getHealthDifference());
-        return tag;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundTag tag) {
-        setHealthDifference(tag.getInt("heartdifference"));
     }
 }

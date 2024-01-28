@@ -15,20 +15,6 @@ public class LifeSteal {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
     public static ModConfig config;
 
-    public static ResourceLocation BARREL_1 = new ResourceLocation("minecraft", "chests/barrel_1");
-    public static ResourceLocation MINERS_HOME_TABLE = new ResourceLocation("minecraft", "chests/miners_home");
-    public static ResourceLocation MINERS_RUINED_SHACK_TABLE = new ResourceLocation("minecraft", "chests/miners_ruined_shack");
-    public static ResourceLocation RICH_CART_TABLE = new ResourceLocation("minecraft", "chests/rich_cart");
-    public static ResourceLocation RUINED_LIBRARY_TABLE = new ResourceLocation("minecraft", "chests/ruined_library");
-
-    public static ResourceLocation modLoc(String name) {
-        return new ResourceLocation(MOD_ID, name);
-    }
-
-    public static String modLocString(String name) {
-        return new ResourceLocation(MOD_ID, name).toString();
-    }
-
     public static void init() {
         LOGGER.info("Lifestealers are on the loose!");
         ModItems.register();

@@ -18,6 +18,7 @@ public class ModTags {
     public static TagKey<Biome> MINERS_LOCATION_2 = makeBiome(LifeSteal.MOD_ID, "has_structure/miners_location_2");
     public static TagKey<Biome> MINERS_LOCATION_3 = makeBiome(LifeSteal.MOD_ID, "has_structure/miners_location_3");
     public static TagKey<Biome> MINERS_LOCATION_4 = makeBiome(LifeSteal.MOD_ID, "has_structure/miners_location_4");
+    public static TagKey<Item> ORIGIN_IGNORE_DIET = makeItem("origins", "ignore_diet");
 
     private static TagKey<Item> makeItem(String domain, String path) {
         return TagKey.create(Registries.ITEM, new ResourceLocation(domain, path));

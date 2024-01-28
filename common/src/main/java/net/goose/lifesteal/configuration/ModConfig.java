@@ -8,9 +8,10 @@ public class ModConfig {
 
     public final ModConfigSpec.IntValue startingHealthDifference;
     public final ModConfigSpec.BooleanValue shouldAllMobsGiveHearts;
-    public final ModConfigSpec.BooleanValue loseHeartsWhenKilledByPlayer;
-    public final ModConfigSpec.BooleanValue loseHeartsWhenKilledByMob;
-    public final ModConfigSpec.BooleanValue loseHeartsWhenKilledByEnvironment;
+    public final ModConfigSpec.BooleanValue loseHealthWhenKilledByPlayer;
+    public final ModConfigSpec.BooleanValue loseHealthWhenKilledByMob;
+    public final ModConfigSpec.BooleanValue loseHealthWhenKilledByEnvironment;
+    public final ModConfigSpec.BooleanValue onlyLoseHealthGained;
     public final ModConfigSpec.IntValue amountOfHealthLostUponLoss;
     public final ModConfigSpec.IntValue maximumHealthGainable;
     public final ModConfigSpec.IntValue maximumHealthLoseable;
@@ -33,7 +34,7 @@ public class ModConfig {
     public final ModConfigSpec.BooleanValue tellPlayersIfHitPointChanged;
     public final ModConfigSpec.ConfigValue advancementUsedForWithdrawing;
     public final ModConfigSpec.ConfigValue textUsedForRequirementOnWithdrawing;
-    public final ModConfigSpec.BooleanValue tellPlayersIfReachedMaxHearts;
+    public final ModConfigSpec.BooleanValue tellPlayersIfReachedMaxHealth;
     public final ModConfigSpec.BooleanValue silentlyRevivePlayer;
     public final ModConfigSpec.BooleanValue playersSpawnHeadUponDeath;
     public final ModConfigSpec.BooleanValue playerDropsHeartCrystalWhenKilled;
@@ -46,7 +47,7 @@ public class ModConfig {
 
     public ModConfig(final ModConfigSpec.Builder builder) {
         builder.comment("IMPORTANT NOTE: 2 Hitpoints = 1 Heart");
-        builder.comment("We recommend editting the config BEFORE starting Minecraft. Most configs will work fine, even if changed in-game, but some require restarting Minecraft to work correctly.");
+        builder.comment("We recommend editing the config BEFORE starting Minecraft. Most configs will work fine, even if changed in-game, but some require restarting Minecraft to work correctly.");
         builder.comment("This category holds general values that most people will want to change.");
         builder.push("General Settings");
         this.startingHealthDifference = buildInt(builder, "Starting additional Hitpoints:", 0, -19, Integer.MAX_VALUE, "Determines the number of additional Hitpoints beyond the 20 you should start with.");
@@ -59,9 +60,10 @@ public class ModConfig {
         builder.comment("This category is for how players should lose hearts. If you want players to not be able to lose hearts at all, disable all the config options below.");
         builder.comment("Settings for when/how hearts are lost");
         builder.push("Losing Hearts");
-        this.loseHeartsWhenKilledByPlayer = buildBoolean(builder, "Lose heart(s) when killed by a player:", true, "Determines if players should lose hearts when killed by another player.");
-        this.loseHeartsWhenKilledByMob = buildBoolean(builder, "Lose heart(s) when killed by a mob:", true, "Determines if players should lose hearts when killed by mobs");
-        this.loseHeartsWhenKilledByEnvironment = buildBoolean(builder, "Lose heart(s) when killed by the environment:", true, "Determines if players lose hearts when killed by the environment. (Lava, fall damage, etc)");
+        this.loseHealthWhenKilledByPlayer = buildBoolean(builder, "Lose hitpoint(s) when killed by a player:", true, "Determines if players should lose hearts when killed by another player.");
+        this.loseHealthWhenKilledByMob = buildBoolean(builder, "Lose hitpoint(s) when killed by a mob:", true, "Determines if players should lose hearts when killed by mobs");
+        this.loseHealthWhenKilledByEnvironment = buildBoolean(builder, "Lose hitpoint(s) when killed by the environment:", true, "Determines if players lose hearts when killed by the environment. (Lava, fall damage, etc)");
+        this.onlyLoseHealthGained = buildBoolean(builder, "Lose hitpoint(s) gained only:", false, "Determines if a player should lose hearts past the amount they gained.");
         builder.pop();
 
         builder.comment("Settings for Items and Blocks");
@@ -75,7 +77,7 @@ public class ModConfig {
         builder.push("Heart Crystals");
         this.disableHeartCrystals = buildBoolean(builder, "Disable Heart Crystals:", false, "Determines if Natural Heart Cores should be disabled. (Doesn't affect Unnatural Heart Cores)");
         this.disableUnnaturalHeartCrystals = buildBoolean(builder, "Disable Unnatural Heart Crystals:", false, "Determines if Unnatural Heart Cores should be disabled. (Doesn't affect Natural Heart Cores)");
-        this.heartCrystalAmountGain = buildInt(builder, "Number of Hitpoints Heart Crystal(s) Permanently Give:", 2, 1, Integer.MAX_VALUE, "Determines how many Hitpoints are given when a Heart Crystal is used.");
+        this.heartCrystalAmountGain = buildInt(builder, "Number of hitpoint(s) Heart Crystal(s) Permanently Give:", 2, 1, Integer.MAX_VALUE, "Determines how many Hitpoints are given when a Heart Crystal is used.");
         this.preventFromUsingCrystalIfMax = buildBoolean(builder, "Prevent players at max Hitpoints from using Heart Crystals:", true, "Determines if Heart Crystals can be used by players at maximum health (if a max is set)");
         this.crystalInstantUse = buildBoolean(builder, "Instantly use Heart Crystals:", false, "Determines if Heart Cores should be used instantly or eaten.");
         builder.pop();
@@ -102,7 +104,7 @@ public class ModConfig {
         builder.push("Maximums");
         this.maximumHealthGainable = buildInt(builder, "Maximum number of additional Hitpoints:", -1, -1, Integer.MAX_VALUE, "Determines the maximum Hitpoints beyond 20. (Remember, 2 Hitpoints = 1 Heart.) Set to -1 to disable.");
         this.maximumHealthLoseable = buildInt(builder, "Maximum number of Hitpoints you can Lose:", -1, -1, Integer.MAX_VALUE, "Determines the maximum number of Hitpoints a player can lose before being eliminated. Set to -1 to disable.");
-        this.tellPlayersIfReachedMaxHearts = buildBoolean(builder, "Notify players if they have max HP:", true, "Determines if players attempting to use a Heart Crystal should be notified if they are already at the maximum.");
+        this.tellPlayersIfReachedMaxHealth = buildBoolean(builder, "Notify players if they have max HP:", true, "Determines if players attempting to use a Heart Crystal should be notified if they are already at the maximum.");
         this.playerDropsHeartCrystalWhenKillerHasMax = buildBoolean(builder, "Players drop a Heart Crystal when killer has max HP", false, "Determines players should drop a Heart Crystal even if the killer has the maximum HP. NOTE: This requires Maximum Hitpoints to be enabled.");
         builder.pop();
         builder.comment("Settings related to commands. Permission Levels range from 0 to 4, 0: Everyone, 1: Moderators, 2: Gamemasters, 3: Admins, 4: Owners");

@@ -9,7 +9,8 @@ public class ModEvents {
     public static void COPY_FROM(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
         HealthData.get(oldPlayer).ifPresent(oldData -> HealthData.get(newPlayer).ifPresent(newData ->
         {
-            newData.setHealthDifference(oldData.getHealthDifference());
+            newData.setHealthDifference(oldData.getHealthDifference(false));
+            newData.setWithdrawalAmount(oldData.getWithdrawalAmount());
             newData.refreshHearts(true);
         }));
     }

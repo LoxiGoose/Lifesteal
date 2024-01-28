@@ -4,6 +4,7 @@ import net.goose.lifesteal.LifeSteal;
 import net.goose.lifesteal.advancement.LSAdvancementTrigger;
 import net.goose.lifesteal.common.block.ModBlocks;
 import net.goose.lifesteal.common.item.ModItems;
+import net.goose.lifesteal.util.ModResources;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.HolderLookup;
@@ -63,41 +64,41 @@ public class ModAdvancementsProvider extends AdvancementProvider {
                             false,
                             false))
                     .addCriterion("has_heart_fragment", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.HEART_FRAGMENT.get()))
-                    .save(saver, LifeSteal.modLocString("root"));
+                    .save(saver, ModResources.modLocString("root"));
             Advancement.Builder.advancement()
                     .parent(ROOT)
                     .display(simpleDisplay(ModBlocks.REVIVE_HEAD.get(), "revived_from_dead", AdvancementType.CHALLENGE))
                     .addCriterion("revived", LSAdvancementTrigger.TriggerInstance.REVIVED())
-                    .save(saver, LifeSteal.modLocString("revived_from_dead"));
+                    .save(saver, ModResources.modLocString("revived_from_dead"));
             AdvancementHolder HEART_CORE = Advancement.Builder.advancement()
                     .parent(ROOT)
                     .display(simpleDisplay(ModItems.HEART_CORE.get(), "get_heart_core", AdvancementType.TASK))
                     .addCriterion("has_heart_core", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.HEART_CORE.get()))
-                    .save(saver, LifeSteal.modLocString("get_heart_core"));
+                    .save(saver, ModResources.modLocString("get_heart_core"));
             AdvancementHolder HEART_CRYSTAL = Advancement.Builder.advancement()
                     .parent(HEART_CORE)
                     .display(simpleDisplay(ModItems.HEART_CRYSTAL.get(), "get_heart_crystal", AdvancementType.TASK))
                     .addCriterion("has_heart_crystal", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.HEART_CRYSTAL.get()))
-                    .save(saver, LifeSteal.modLocString("get_heart_crystal"));
+                    .save(saver, ModResources.modLocString("get_heart_crystal"));
             AdvancementHolder GET_10_MAX_HEARTS = Advancement.Builder.advancement()
                     .parent(HEART_CRYSTAL)
                     .display(simpleDisplay(ModBlocks.HEART_CORE_BLOCK.get(), "get_10_max_hearts", AdvancementType.GOAL))
                     .addCriterion("has_10_max_hearts", LSAdvancementTrigger.TriggerInstance.GET_10_MAX_HEARTS())
                     .rewards(AdvancementRewards.Builder.experience(500))
-                    .save(saver, LifeSteal.modLocString("get_10_max_hearts"));
+                    .save(saver, ModResources.modLocString("get_10_max_hearts"));
             Advancement.Builder.advancement()
                     .parent(GET_10_MAX_HEARTS)
                     .display(simpleDisplay(Items.TOTEM_OF_UNDYING, "use_totem_while_20_max_hearts", AdvancementType.CHALLENGE))
                     .addCriterion("used_totem_while_20_max_hearts", LSAdvancementTrigger.TriggerInstance.USE_TOTEM_WHILE_20_MAX_HEARTS())
                     .rewards(AdvancementRewards.Builder.experience(500))
-                    .save(saver, LifeSteal.modLocString("use_totem_while_20_max_hearts"));
+                    .save(saver, ModResources.modLocString("use_totem_while_20_max_hearts"));
             Advancement.Builder.advancement()
                     .parent(GET_10_MAX_HEARTS)
                     .display(simpleDisplay(Items.NETHERITE_HELMET, "get_10_max_hearts_with_netherite_armor", AdvancementType.CHALLENGE))
                     .addCriterion("has_full_netherite_armor", InventoryChangeTrigger.TriggerInstance.hasItems(Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS))
                     .addCriterion("has_10_max_hearts", LSAdvancementTrigger.TriggerInstance.GET_10_MAX_HEARTS())
                     .rewards(AdvancementRewards.Builder.experience(500))
-                    .save(saver, LifeSteal.modLocString("get_10_max_hearts_with_netherite_armor"));
+                    .save(saver, ModResources.modLocString("get_10_max_hearts_with_netherite_armor"));
         }
     }
 }
