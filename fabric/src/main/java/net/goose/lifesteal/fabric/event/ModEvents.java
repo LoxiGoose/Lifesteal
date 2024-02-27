@@ -10,7 +10,6 @@ public class ModEvents {
         HealthData.get(oldPlayer).ifPresent(oldData -> HealthData.get(newPlayer).ifPresent(newData ->
         {
             newData.setHealthDifference(oldData.getHealthDifference(false));
-            newData.setWithdrawalAmount(oldData.getWithdrawalAmount());
             newData.refreshHearts(true);
         }));
     }

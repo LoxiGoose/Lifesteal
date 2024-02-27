@@ -196,9 +196,9 @@ public class HealthData implements IHealthData {
         throw new AssertionError();
     }
     @Override
-    public int getHealthDifference(boolean onlyGetGainedOrLostDifference) {
+    public int getHealthDifference(boolean excludeStartingHealthDifference) {
         int healthDifference = getHealthDifference(this);
-        return onlyGetGainedOrLostDifference ? (int) (healthDifference - (Math.signum(healthDifference) * LifeSteal.config.startingHealthDifference.get())) : getHealthDifference(this);
+        return excludeStartingHealthDifference ? (int) (healthDifference - (Math.signum(healthDifference) * LifeSteal.config.startingHealthDifference.get())) : getHealthDifference(this);
     }
 
     @Override
@@ -242,13 +242,20 @@ public class HealthData implements IHealthData {
     // Returns the amount a player's HPDifference would have to be to get banned.
     @Override
     public double getHPDifferenceRequiredForBan(){
-        double healthModified = this.getHealthModifiedTotal(false) + this.livingEntity.getAttribute(Attributes.MAX_HEALTH).getBaseValue();
-        return -healthModified;
+        double healthModifiedBeforeBase = this.getHealthModifiedTotal(false);
+
+        if(healthModifiedBeforeBase <= -20) {
+            LifeSteal.LOGGER.warn("Player's health modified before HealthDifference is way too low! Returning base amount required for ban: this may cause issues.");
+            return this.livingEntity.getAttribute(Attributes.MAX_HEALTH).getBaseValue();
+        }
+
+        double healthModifiedTotal = healthModifiedBeforeBase + this.livingEntity.getAttribute(Attributes.MAX_HEALTH).getBaseValue();
+        return -healthModifiedTotal;
     }
 
     @Override
     public double getAmountOfHealthCanLose(){
-        double amountOfHealthCanLose = ;
+        double amountOfHealthCanLose = getHealthDifference(false) - getHPDifferenceRequiredForBan();
 
         if(LifeSteal.config.onlyLoseHealthGained.get()) {
 

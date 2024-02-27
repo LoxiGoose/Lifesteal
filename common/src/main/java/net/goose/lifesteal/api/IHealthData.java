@@ -14,7 +14,7 @@ public interface IHealthData {
     double getHPDifferenceRequiredForBan();
     double getAmountOfHealthCanLose();
     void banForDeath();
-    int getHealthDifference(boolean onlyGetGainedDifference);
+    int getHealthDifference(boolean excludeStartingHealthDifference);
     void setHealthDifference(int hearts);
     void refreshHearts(boolean healtoMax);
 }
